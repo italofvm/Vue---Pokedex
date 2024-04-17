@@ -2,7 +2,7 @@
 
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
-    <div class="container-fluid">
+    <div class="container-fluid container">
       <RouterLink class="navbar-brand" to="/">
         <img
           src="/src/assets/img/avatar.png"
@@ -24,8 +24,8 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNavAltMarkup">
+        <div class="navbar-nav ">
           <RouterLink class="nav-link" aria-current="page" to="/"
             >Home</RouterLink
           >
