@@ -9,8 +9,10 @@ let urlBaseSvg = ref(
 )
 let pokemons = ref([])
 let searchPokemon = ref("")
+let pokemonSelected = reactive(ref())
+let loading = ref(false)
 
-const fetchPokemons = () =>
+const fetchPokemons = (pokemon) =>
   api
     .get("/pokemon?limit=250&offset=0")
     .then((res) => (pokemons.value = res.data.results))
@@ -26,14 +28,27 @@ const pokemonFiltered = computed(() => {
     )
   }
 })
+
+const selectPokemon = async (pokemon) => {
+  loading.value = true
+  await fetch(pokemon.url)
+    .then((res) => res.json())
+    .then((res) => (pokemonSelected.value = res))
+    .catch((err) => console.log(err))
+    .finally(() => {
+      loading.value = false
+    })
+
+  console.log(pokemonSelected.value)
+}
 </script>
 
 <template>
   <main>
-    <div class="container text-center">
+    <div class="container text-center text-body-secondary">
       <div class="row mt-4 mb-5">
         <div class="col-sm-12 col-md-6">
-          <div class="card">
+          <div class="card card-list">
             <div class="card-body row">
               <div class="mb-3">
                 <label hidden for="searchPokemon" class="form-label"
@@ -54,6 +69,7 @@ const pokemonFiltered = computed(() => {
                 :key="pokemon.name"
                 :name="pokemon.name"
                 :urlBaseSvg="urlBaseSvg + pokemon.url.split('/')[6] + '.svg'"
+                @click="selectPokemon(pokemon)"
               />
             </div>
           </div>
@@ -61,10 +77,26 @@ const pokemonFiltered = computed(() => {
         <!-- Card Pokemons -->
 
         <div class="col-sm-12 col-md-6">
-          <CardPokemonSelected />
+          <CardPokemonSelected
+            :name="pokemonSelected?.name"
+            :xp="pokemonSelected?.base_experience"
+            :height="pokemonSelected?.height"
+            :abilitiesOne="pokemonSelected?.abilities[0].ability.name"
+            :abilitiesTwo="pokemonSelected?.abilities[1].ability.name"
+            :image="pokemonSelected?.sprites.other.dream_world.front_default"
+            :loading="loading"
+          />
         </div>
         <!-- Card Details -->
       </div>
     </div>
   </main>
 </template>
+
+<style>
+.card-list {
+  max-height: 85vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+</style>
