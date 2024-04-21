@@ -11,20 +11,21 @@ let pokemons = ref([])
 let searchPokemon = ref("")
 let pokemonSelected = reactive(ref())
 let loading = ref(false)
+let pokemonSelectedAbilities = ref([])
+let pokemonSelectedGames = ref([])
+let pokemonSelectedTypes = ref([])
 
-const fetchPokemons = (pokemon) =>
-  api
-    .get("/pokemon?limit=250&offset=0")
-    .then((res) => (pokemons.value = res.data.results))
-    .catch((err) => console.log(err))
+const fetchPokemons = async (pokemon) =>
+  await api.get(`${pokemon}`).then((res) => {
+    pokemons.value = res.data.results
+  })
+
 onMounted(fetchPokemons)
 
 const pokemonFiltered = computed(() => {
   if (pokemons.value && searchPokemon) {
     return pokemons.value.filter((pokemon) =>
-      pokemon.name
-        .toLowerCase()
-        .includes(searchPokemon.value.toLocaleLowerCase())
+      pokemon.name.toLowerCase().includes(searchPokemon.value.toLowerCase())
     )
   }
 })
@@ -33,14 +34,23 @@ const selectPokemon = async (pokemon) => {
   loading.value = true
   await fetch(pokemon.url)
     .then((res) => res.json())
-    .then((res) => (pokemonSelected.value = res))
+    .then((res) => {
+      pokemonSelected.value = res
+      pokemonSelectedAbilities.value = res.abilities.map(
+        (ability) => ability.ability.name
+      )
+      pokemonSelectedGames.value = res.game_indices.map(
+        (gameIndex) => gameIndex.version.name
+      )
+
+      pokemonSelectedTypes.value = res.types.map((type) => type.type.name)
+    })
     .catch((err) => console.log(err))
     .finally(() => {
       loading.value = false
     })
-
-  console.log(pokemonSelected.value)
 }
+
 </script>
 
 <template>
@@ -48,18 +58,30 @@ const selectPokemon = async (pokemon) => {
     <div class="container text-center text-body-secondary">
       <div class="row mt-4 mb-5">
         <div class="col-sm-12 col-md-6">
+          <CardPokemonSelected
+            :name="pokemonSelected?.name"
+            :xp="pokemonSelected?.base_experience"
+            :height="pokemonSelected?.height"
+            :abilities="pokemonSelectedAbilities"
+            :games="pokemonSelectedGames"
+            :types="pokemonSelectedTypes"
+            :image="pokemonSelected?.sprites.other.dream_world.front_default"
+            :loading="loading"
+          />
+        </div>
+        <!-- Card Details -->
+
+        <div class="col-sm-12 col-md-6">
           <div class="card card-list">
             <div class="card-body row">
               <div class="mb-3">
-                <label hidden for="searchPokemon" class="form-label"
-                  >Pesquisar</label
-                >
+                <label for="filterName" class="form-label">Nome</label>
                 <input
                   v-model="searchPokemon"
                   type="text"
                   class="form-control"
-                  id="searchPokemon"
-                  placeholder="Pesquisar..."
+                  id="filterName"
+                  placeholder="Filtrar por nome..."
                 />
               </div>
               <!-- Search -->
@@ -75,19 +97,6 @@ const selectPokemon = async (pokemon) => {
           </div>
         </div>
         <!-- Card Pokemons -->
-
-        <div class="col-sm-12 col-md-6">
-          <CardPokemonSelected
-            :name="pokemonSelected?.name"
-            :xp="pokemonSelected?.base_experience"
-            :height="pokemonSelected?.height"
-            :abilitiesOne="pokemonSelected?.abilities[0].ability.name"
-            :abilitiesTwo="pokemonSelected?.abilities[1].ability.name"
-            :image="pokemonSelected?.sprites.other.dream_world.front_default"
-            :loading="loading"
-          />
-        </div>
-        <!-- Card Details -->
       </div>
     </div>
   </main>
