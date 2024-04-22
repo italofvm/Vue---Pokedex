@@ -4,7 +4,7 @@ import api from "@/services/api"
 import ListPokemons from "../components/ListPokemons.vue"
 import CardPokemonSelected from "../components/CardPokemonSelected.vue"
 
-let urlBaseSvg = ref(
+let baseUrlSvg = ref(
   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/"
 )
 let pokemons = ref([])
@@ -50,7 +50,6 @@ const selectPokemon = async (pokemon) => {
       loading.value = false
     })
 }
-
 </script>
 
 <template>
@@ -90,8 +89,9 @@ const selectPokemon = async (pokemon) => {
                 v-for="pokemon in pokemonFiltered"
                 :key="pokemon.name"
                 :name="pokemon.name"
-                :urlBaseSvg="urlBaseSvg + pokemon.url.split('/')[6] + '.svg'"
+                :baseUrlSvg="baseUrlSvg + pokemon.url.split('/')[6] + '.svg'"
                 @click="selectPokemon(pokemon)"
+                @scroll="handleScroll"
               />
             </div>
           </div>
@@ -107,5 +107,11 @@ const selectPokemon = async (pokemon) => {
   max-height: 85vh;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .card-list {
+    max-height: 70vh;
+  }
 }
 </style>

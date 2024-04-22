@@ -1,16 +1,14 @@
 <script setup>
-const pokemon = defineProps(["name", "urlBaseSvg"])
-
-
+const pokemon = defineProps(["name", "baseUrlSvg", "types"])
 </script>
 
 <template>
-    <div class="col-sm-4">
-      <div class="card p-2 mb-2 md-3 cardListPokemon">
-        <p class="text-center text-uppercase">{{ pokemon.name }}</p>
-        <img :src="urlBaseSvg" class="card-img-top" alt="..." height="90" />
-      </div>
+  <div class="col-sm-4">
+    <div class="card p-2 mb-2 md-3 cardListPokemon">
+      <p class="text-center text-uppercase">{{ pokemon.name }}</p>
+      <img :src="baseUrlSvg" class="card-img-top" alt="..." height="90" />
     </div>
+  </div>
 </template>
 
 <style>

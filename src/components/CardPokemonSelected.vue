@@ -6,7 +6,6 @@
     <img
       v-if="pokemon.name"
       :src="image"
-      height="350px"
       class="card-img-top pt-2"
       :alt="pokemon.name"
     />
@@ -51,7 +50,7 @@
                   class="accordion-collapse collapse"
                   data-bs-parent="#accordionExample"
                 >
-                  <div class="accordion-body">
+                  <div class="accordion-body text-white">
                     {{ pokemon.xp }}
                   </div>
                 </div>
@@ -74,7 +73,7 @@
                   class="accordion-collapse collapse"
                   data-bs-parent="#accordionExample"
                 >
-                  <div class="accordion-body">
+                  <div class="accordion-body text-white">
                     {{ pokemon.height }}
                   </div>
                 </div>
@@ -104,7 +103,7 @@
                 data-bs-parent="#accordion"
               >
                 <div
-                  class="accordion-body"
+                  class="accordion-body text-white"
                   v-for="ability in pokemon.abilities"
                 >
                   {{ ability }}
@@ -129,7 +128,10 @@
                 class="accordion-collapse collapse games"
                 data-bs-parent="#accordionExample"
               >
-                <div class="accordion-body" v-for="game in games">
+                <div
+                  class="accordion-body text-white games"
+                  v-for="game in games"
+                >
                   {{ game }}
                 </div>
               </div>
@@ -164,11 +166,30 @@ const pokemon = defineProps([
   );
 }
 
+.card-pokemon-selected img {
+  height: 350px;
+}
+
 .games {
-  max-height: 30vh;
+  max-height: 25vh;
   overflow-y: scroll;
   overflow-x: hidden;
   border-radius: 5%;
+}
+
+@media (max-width: 768px) {
+  .card-pokemon-selected {
+    height: 65vh;
+    margin-bottom: 1rem;
+  }
+
+  .card-pokemon-selected img {
+    height: 200px;
+  }
+
+  .games {
+    max-height: 15vh;
+  }
 }
 
 .normal {
